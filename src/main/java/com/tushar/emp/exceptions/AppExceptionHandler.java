@@ -24,7 +24,7 @@ import java.util.stream.Collectors;
 
 @ControllerAdvice
 @Log4j2
-public class AppException extends ResponseEntityExceptionHandler {
+public class AppExceptionHandler extends ResponseEntityExceptionHandler {
 
     @Autowired
     private AppExceptionResponse appExceptionResponse;

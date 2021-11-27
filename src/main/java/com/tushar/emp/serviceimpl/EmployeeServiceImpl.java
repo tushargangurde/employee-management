@@ -2,7 +2,7 @@ package com.tushar.emp.serviceimpl;
 
 import com.tushar.emp.dto.request.AddNewEmployeeRequest;
 import com.tushar.emp.dto.response.AddNewEmployeeResponse;
-import com.tushar.emp.dto.response.GetAllEmployeesResponse;
+import com.tushar.emp.dto.response.EmployeeResponse;
 import com.tushar.emp.dto.response.UpdateEmployeeResponse;
 import com.tushar.emp.employeeexceptions.EmployeeIDNotPresentException;
 import com.tushar.emp.employeeexceptions.EmployeeNotPresentException;
@@ -38,11 +38,11 @@ public class EmployeeServiceImpl implements EmployeeServices {
     private ModelMapper modelMapper;
 
     @Override
-    public List<GetAllEmployeesResponse> getAllEmployees() {
+    public List<EmployeeResponse> getAllEmployees() {
         log.info("Inside EmployeeServiceImpl ----> getAllEmployees");
         List<Employee> employees = employeeRepository.findAll();
-        List<GetAllEmployeesResponse> employeesResponse = employees.stream()
-                .map(e -> modelMapper.map(e, GetAllEmployeesResponse.class))
+        List<EmployeeResponse> employeesResponse = employees.stream()
+                .map(e -> modelMapper.map(e, EmployeeResponse.class))
                 .collect(Collectors.toList());
         return employeesResponse;
     }
@@ -68,7 +68,7 @@ public class EmployeeServiceImpl implements EmployeeServices {
     }
 
     @Override
-    public Employee getEmployee(String employeeId) {
+    public EmployeeResponse getEmployee(String employeeId) {
         log.info("Inside EmployeeServiceImpl ----> getEmployee");
         if (employeeId == null || employeeId.length() == 0) {
             throw new EmployeeIDNotPresentException("Employee ID is null or not present");
@@ -77,7 +77,8 @@ public class EmployeeServiceImpl implements EmployeeServices {
             if (employee.isEmpty()) {
                 throw new EmployeeNotPresentException("Employee with Employee ID " + employeeId + " is not available");
             } else {
-                return employee.get();
+                EmployeeResponse employeeResponse = modelMapper.map(employee.get(), EmployeeResponse.class);
+                return employeeResponse;
             }
         }
     }
@@ -85,7 +86,8 @@ public class EmployeeServiceImpl implements EmployeeServices {
     @Override
     public UpdateEmployeeResponse updateEmployee(String employeeId, Map<Object, Object> fields) {
         log.info("Inside EmployeeServiceImpl ----> updateEmployee");
-        Employee employee = getEmployee(employeeId);
+        EmployeeResponse employeeResponse = getEmployee(employeeId);
+        Employee employee = modelMapper.map(employeeResponse, Employee.class);
         fields.forEach((k, v) -> {
             Field field = ReflectionUtils.findField(Employee.class, (String) k);
             field.setAccessible(true);
@@ -100,7 +102,8 @@ public class EmployeeServiceImpl implements EmployeeServices {
     public Map<String, String> deleteEmployee(String employeeId) {
         log.info("Inside EmployeeServiceImpl ----> deleteEmployee");
         Map<String, String> messageResponse = new HashMap<>();
-        Employee employeeToBeDeleted = getEmployee(employeeId);
+        EmployeeResponse employeeResponse = getEmployee(employeeId);
+        Employee employeeToBeDeleted = modelMapper.map(employeeResponse, Employee.class);
         Integer empId = employeeToBeDeleted.getId();
         employeeRepository.deleteById(empId);
         messageResponse.put("message", "Successfully deleted employee with Employee ID" + employeeId);

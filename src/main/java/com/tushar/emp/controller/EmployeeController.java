@@ -2,9 +2,8 @@ package com.tushar.emp.controller;
 
 import com.tushar.emp.dto.request.AddNewEmployeeRequest;
 import com.tushar.emp.dto.response.AddNewEmployeeResponse;
-import com.tushar.emp.dto.response.GetAllEmployeesResponse;
+import com.tushar.emp.dto.response.EmployeeResponse;
 import com.tushar.emp.dto.response.UpdateEmployeeResponse;
-import com.tushar.emp.entities.Employee;
 import com.tushar.emp.services.EmployeeServices;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,9 +25,9 @@ public class EmployeeController {
     private EmployeeServices employeeServices;
 
     @GetMapping("/getAll")
-    public ResponseEntity<List<GetAllEmployeesResponse>> getAllEmployees() {
+    public ResponseEntity<List<EmployeeResponse>> getAllEmployees() {
         log.info("Inside EmployeeController ----> getAllEmployees");
-        List<GetAllEmployeesResponse> allEmployees = employeeServices.getAllEmployees();
+        List<EmployeeResponse> allEmployees = employeeServices.getAllEmployees();
         return new ResponseEntity<>(allEmployees, HttpStatus.OK);
     }
 
@@ -40,9 +39,9 @@ public class EmployeeController {
     }
 
     @GetMapping("/get/{employeeId}")
-    public ResponseEntity<Employee> getEmployee(@PathVariable String employeeId) {
+    public ResponseEntity<EmployeeResponse> getEmployee(@PathVariable String employeeId) {
         log.info("Inside EmployeeController ----> getEmployee");
-        Employee employee = employeeServices.getEmployee(employeeId);
+        EmployeeResponse employee = employeeServices.getEmployee(employeeId);
         return new ResponseEntity<>(employee, HttpStatus.OK);
     }
 
